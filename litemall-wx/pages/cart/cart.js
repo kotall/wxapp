@@ -55,7 +55,7 @@ Page({
  getCartList: function() {
   let that = this;
   util.request(api.CartList).then(function(res) {
-   if (res.errno === 0) {
+   if (res.code === 0) {
     that.setData({
      cartGoods: res.data.cartList,
      cartTotal: res.data.cartTotal
@@ -94,7 +94,7 @@ Page({
     productIds: productIds,
     isChecked: that.data.cartGoods[itemIndex].checked ? 0 : 1
    }, 'POST').then(function(res) {
-    if (res.errno === 0) {
+    if (res.code === 0) {
      that.setData({
       cartGoods: res.data.cartList,
       cartTotal: res.data.cartTotal
@@ -143,7 +143,7 @@ Page({
     productIds: productIds,
     isChecked: that.isCheckedAll() ? 0 : 1
    }, 'POST').then(function(res) {
-    if (res.errno === 0) {
+    if (res.code === 0) {
      console.log(res.data);
      that.setData({
       cartGoods: res.data.cartList,
@@ -282,7 +282,7 @@ Page({
   util.request(api.CartDelete, {
    productIds: productIds
   }, 'POST').then(function(res) {
-   if (res.errno === 0) {
+   if (res.code === 0) {
     console.log(res.data);
     let cartList = res.data.cartList.map(v => {
      v.checked = false;

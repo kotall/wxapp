@@ -38,7 +38,7 @@ Page({
     //   success: function (res) {
     //     if (res.confirm) {
     //       util.request(api.OrderPrepay, { orderId: that.data.orderId }, 'POST').then(res => {
-    //         if (res.errno === 0) {
+    //         if (res.code === 0) {
     //           that.setData({
     //             status: true
     //           });

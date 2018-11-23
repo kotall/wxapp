@@ -43,7 +43,7 @@ Page({
       name: 'file',
       success: function (res) {
         var _res = JSON.parse(res.data);
-        if (_res.errno === 0) {
+        if (_res.code === 0) {
           var url = _res.data.url
           that.data.picUrls.push(url)
           that.setData({

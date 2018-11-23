@@ -404,7 +404,7 @@ Page({
     // 页面显示
     var that = this;
     util.request(api.CartGoodsCount).then(function(res) {
-      if (res.errno === 0) {
+      if (res.code === 0) {
         that.setData({
           cartGoodsCount: res.data
         });
@@ -421,7 +421,7 @@ Page({
       }, "POST")
       .then(function(res) {
         let _res = res;
-        if (_res.errno == 0) {
+        if (_res.code == 0) {
           if (_res.data.type == 'add') {
             that.setData({
               collectImage: that.data.hasCollectImage

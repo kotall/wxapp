@@ -122,7 +122,7 @@ Page({
   util.request(api.GroupOnDetail, {
    grouponId: that.data.id
   }).then(function(res) {
-   if (res.errno === 0) {
+   if (res.code === 0) {
     that.setData({
      joiners: res.data.joiners,
      groupon: res.data.groupon,
@@ -262,7 +262,7 @@ Page({
      util.request(api.OrderConfirm, {
       orderId: orderInfo.id
      }, 'POST').then(function(res) {
-      if (res.errno === 0) {
+      if (res.code === 0) {
        wx.showToast({
         title: '确认收货成功！'
        });

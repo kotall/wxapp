@@ -35,7 +35,7 @@ Page({
    couponId: that.data.couponId,
    grouponRulesId: that.data.grouponRulesId
   }).then(function(res) {
-   if (res.errno === 0) {
+   if (res.code === 0) {
     that.setData({
      checkedGoodsList: res.data.checkedGoodsList,
      checkedAddress: res.data.checkedAddress,
