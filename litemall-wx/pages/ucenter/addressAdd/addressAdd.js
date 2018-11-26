@@ -21,9 +21,9 @@ Page({
     addressId: 0,
     openSelectRegion: false,
     selectRegionList: [
-      { id: 0, name: '省份', pid: 1, type: 1 },
-      { id: 0, name: '城市', pid: 1, type: 2 },
-      { id: 0, name: '区县', pid: 1, type: 3 }
+      { areaCode: 0, name: '省份', parentCode: 1, type: 1 },
+      { areaCode: 0, name: '城市', parentCode: 1, type: 2 },
+      { areaCode: 0, name: '区县', parentCode: 1, type: 3 }
     ],
     regionType: 1,
     regionList: [],
@@ -59,7 +59,7 @@ Page({
   },
   getAddressDetail() {
     let that = this;
-    util.request(api.AddressDetail, { id: that.data.addressId }).then(function (res) {
+    util.request(api.AddressDetail, { areaCode: that.data.addressId }).then(function (res) {
       if (res.code === 0) {
         if(res.data){
             that.setData({
@@ -72,7 +72,7 @@ Page({
   setRegionDoneStatus() {
     let that = this;
     let doneStatus = that.data.selectRegionList.every(item => {
-      return item.id != 0;
+      return item.areaCode != 0;
     });
 
     that.setData({
@@ -90,17 +90,17 @@ Page({
     let address = this.data.address;
     if (address.provinceId > 0 && address.cityId > 0 && address.areaId > 0) {
       let selectRegionList = this.data.selectRegionList;
-      selectRegionList[0].id = address.provinceId;
+      selectRegionList[0].areaCode = address.provinceId;
       selectRegionList[0].name = address.provinceName;
-      selectRegionList[0].pid = 0;
+      selectRegionList[0].parentCode = 0;
 
-      selectRegionList[1].id = address.cityId;
+      selectRegionList[1].areaCode = address.cityId;
       selectRegionList[1].name = address.cityName;
-      selectRegionList[1].pid = address.provinceId;
+      selectRegionList[1].parentCode = address.provinceId;
 
-      selectRegionList[2].id = address.areaId;
+      selectRegionList[2].areaCode = address.areaId;
       selectRegionList[2].name = address.areaName;
-      selectRegionList[2].pid = address.cityId;
+      selectRegionList[2].parentCode = address.cityId;
 
       this.setData({
         selectRegionList: selectRegionList,
@@ -111,9 +111,9 @@ Page({
     } else {
       this.setData({
         selectRegionList: [
-          { id: 0, name: '省份', pid: 0, type: 1 },
-          { id: 0, name: '城市', pid: 0, type: 2 },
-          { id: 0, name: '区县', pid: 0, type: 3 }
+          { areaCode: 0, name: '省份', parentCode: 0, type: 1 },
+          { areaCode: 0, name: '城市', parentCode: 0, type: 2 },
+          { areaCode: 0, name: '区县', parentCode: 0, type: 3 }
         ],
         regionType: 1
       })
@@ -126,9 +126,9 @@ Page({
   onLoad: function (options) {
     // 页面初始化 options为页面跳转所带来的参数
     console.log(options)
-    if (options.id && options.id != 0) {
+    if (options.areaCode && options.areaCode != 0) {
       this.setData({
-        addressId: options.id
+        addressId: options.areaCode
       });
       this.getAddressDetail();
     }
@@ -142,7 +142,7 @@ Page({
     let selectRegionList = that.data.selectRegionList;
 
     //判断是否可点击
-    if (regionTypeIndex + 1 == this.data.regionType || (regionTypeIndex - 1 >= 0 && selectRegionList[regionTypeIndex-1].id <= 0)) {
+    if (regionTypeIndex + 1 == this.data.regionType || (regionTypeIndex - 1 >= 0 && selectRegionList[regionTypeIndex - 1].areaCode <= 0)) {
       return false;
     }
 
@@ -152,7 +152,7 @@ Page({
     
     let selectRegionItem = selectRegionList[regionTypeIndex];
 
-    this.getRegionList(selectRegionItem.pid);
+    this.getRegionList(selectRegionItem.parentCode);
 
     this.setRegionDoneStatus();
 
@@ -161,7 +161,7 @@ Page({
     let that = this;
     let regionIndex = event.target.dataset.regionIndex;
     let regionItem = this.data.regionList[regionIndex];
-    let regionType = regionItem.type;
+    let regionType = regionItem.layer;
     let selectRegionList = this.data.selectRegionList;
     selectRegionList[regionType - 1] = regionItem;
 
@@ -171,7 +171,7 @@ Page({
         selectRegionList: selectRegionList,
         regionType: regionType + 1
       })
-      this.getRegionList(regionItem.id);
+      this.getRegionList(regionItem.areaCode);
     } else {
       this.setData({
         selectRegionList: selectRegionList
@@ -181,9 +181,9 @@ Page({
     //重置下级区域为空
     selectRegionList.map((item, index) => {
       if (index > regionType - 1) {
-        item.id = 0;
+        item.areaCode = 0;
         item.name = index == 1 ? '城市' : '区县';
-        item.pid = 0;
+        item.parentCode = 0;
       }
       return item;
     });
@@ -197,7 +197,7 @@ Page({
       regionList: that.data.regionList.map(item => {
 
         //标记已选择的
-        if (that.data.regionType == item.type && that.data.selectRegionList[that.data.regionType - 1].id == item.id) {
+        if (that.data.regionType == item.layer && that.data.selectRegionList[that.data.regionType - 1].areaCode == item.areaCode) {
           item.selected = true;
         } else {
           item.selected = false;
@@ -217,9 +217,9 @@ Page({
 
     let address = this.data.address;
     let selectRegionList = this.data.selectRegionList;
-    address.provinceId = selectRegionList[0].id;
-    address.cityId = selectRegionList[1].id;
-    address.areaId = selectRegionList[2].id;
+    address.provinceId = selectRegionList[0].areaCode;
+    address.cityId = selectRegionList[1].areaCode;
+    address.areaId = selectRegionList[2].areaCode;
     address.provinceName = selectRegionList[0].name;
     address.cityName = selectRegionList[1].name;
     address.areaName = selectRegionList[2].name;
@@ -240,13 +240,13 @@ Page({
   getRegionList(regionId) {
     let that = this;
     let regionType = that.data.regionType;
-    util.request(api.RegionList, { pid: regionId }).then(function (res) {
+    util.request(api.RegionList, { areaCode: regionId }).then(function (res) {
       if (res.code === 0) {
         that.setData({
           regionList: res.data.map(item => {
 
             //标记已选择的
-            if (regionType == item.type && that.data.selectRegionList[regionType - 1].id == item.id) {
+            if (regionType == item.layer && that.data.selectRegionList[regionType - 1].areaCode == item.areaCode) {
               item.selected = true;
             } else {
               item.selected = false;
