@@ -376,7 +376,7 @@ Page({
   // 获取选中的产品（根据规格）
   getCheckedProductItem: function(key) {
     return this.data.productList.filter(function(v) {
-      if (v.specifications.toString() == key.toString()) {
+      if (v.specifications.includes(key.toString())) {
         return true;
       } else {
         return false;
